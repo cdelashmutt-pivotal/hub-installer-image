@@ -1,0 +1,11 @@
+# cp this to .envrc, fill in the real token, then run `direnv allow`.
+# .envrc itself is gitignored — never commit the real token.
+
+export TANZU_HUB_USERNAME="someone@broadcom.com"
+export TANZU_HUB_TOKEN="paste-the-broadcom-support-portal-token-here"
+
+# Uncomment after running ./trust-advisor-cert.sh once, so the Application
+# Advisor CLI picks up the truststore automatically instead of needing
+# -Djavax.net.ssl.trustStore=... on every command (JDK_JAVA_OPTIONS is read
+# by any `java` launcher, which is what the advisor CLI is under the hood):
+# export JDK_JAVA_OPTIONS="-Djavax.net.ssl.trustStore=$PWD/myTrustStore.jks -Djavax.net.ssl.trustStorePassword=changeit"

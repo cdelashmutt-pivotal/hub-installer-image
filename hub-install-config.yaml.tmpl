@@ -1,0 +1,10 @@
+profile: evaluation
+enableTIA: false
+hubSku: tse
+ingress:
+  host: hub.local
+  loadBalancerIP: __LOAD_BALANCER_IP__
+contour:
+  envoy:
+    service:
+      isNodePort: true
