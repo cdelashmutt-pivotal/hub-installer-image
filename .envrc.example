@@ -4,6 +4,9 @@
 export TANZU_HUB_USERNAME="someone@broadcom.com"
 export TANZU_HUB_TOKEN="paste-the-broadcom-support-portal-token-here"
 
+# Uncomment to install the full Hub SKU instead of the default "tse" SKU.
+# export HUB_SKU="full"
+
 # Uncomment after running ./trust-advisor-cert.sh once, so the Application
 # Advisor CLI picks up Hub's self-signed cert automatically instead of
 # needing APP_ADVISOR_OPTIONS_CERT_PATH=... on every command. (The Advisor

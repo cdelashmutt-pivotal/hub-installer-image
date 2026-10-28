@@ -6,6 +6,7 @@ KIND_CONFIG="$SCRIPT_DIR/hub-cluster.yaml"
 STORAGE_CLASS="$SCRIPT_DIR/sc.yaml"
 HUB_CONFIG_TEMPLATE="$SCRIPT_DIR/hub-install-config.yaml.tmpl"
 HUB_CONFIG_OUT="$SCRIPT_DIR/hub-install-config.yaml"
+HUB_SKU="${HUB_SKU:-tse}"
 
 CLUSTER_NAME="$(awk -F'[: ]+' '/^name:/{print $2; exit}' "$KIND_CONFIG")"
 CONTAINER_PORT="$(grep -m1 'containerPort:' "$KIND_CONFIG" | grep -oE '[0-9]+')"
@@ -69,5 +70,5 @@ fi
 LB_IP="$(docker inspect "$LB_NODE" --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')"
 echo "setup-cluster: load balancer node '${LB_NODE}' -> ${LB_IP}" >&2
 
-sed "s/__LOAD_BALANCER_IP__/${LB_IP}/" "$HUB_CONFIG_TEMPLATE" > "$HUB_CONFIG_OUT"
+sed -e "s/__LOAD_BALANCER_IP__/${LB_IP}/" -e "s/__HUB_SKU__/${HUB_SKU}/" "$HUB_CONFIG_TEMPLATE" > "$HUB_CONFIG_OUT"
 echo "setup-cluster: wrote ${HUB_CONFIG_OUT}" >&2
