@@ -39,10 +39,7 @@ Then flush your DNS cache so it takes effect immediately:
 sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
 ```
 
-Once installed (step 3), access Hub in a browser at `https://hub.local:8443`,
-or run `./enable-port-443-redirect.sh` once (requires `sudo`) to reach it at
-plain `https://hub.local` instead — see **Known issue: binding host port
-443** below.
+Once installed (step 3), run `./enable-port-443-redirect.sh` once (requires `sudo`).  See **Known issue: binding host port 443** below.
 
 ### 2. Build the installer container
 
@@ -137,7 +134,6 @@ installer — run it once Hub is up and reachable:
 
 ```bash
 ./trust-advisor-cert.sh                 # defaults to hub.local:443
-./trust-advisor-cert.sh hub.local 8443  # if not using enable-port-443-redirect.sh
 ```
 
 This writes `server-cert.pem` and `myTrustStore.jks` in this directory (both
