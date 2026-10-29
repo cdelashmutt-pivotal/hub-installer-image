@@ -5,7 +5,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 INSTALL_VERSION="${INSTALL_VERSION:-11.0.0-350-europa+va99b428}"
 REPOSITORY="tanzu-platform-sm.packages.broadcom.com/hub-self-managed/${INSTALL_VERSION//+/--}/packages"
-CONFIG_FILE="${CONFIG_FILE:-hub-install-config.yaml}"
+CONFIG_FILE="${CONFIG_FILE:-/workspace/hub-install-config.yaml}"
 KUBECONFIG_PATH="${KUBECONFIG:-/root/.kube/config}"
 USERNAME="${TANZU_HUB_USERNAME:-}"
 
