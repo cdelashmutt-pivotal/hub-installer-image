@@ -170,6 +170,47 @@ Hub's cert is regenerated every time the kind cluster is recreated, so rerun
 overwritten in place, so nothing needs updating in `.envrc` when that
 happens.
 
+## Optional: override Hub workload settings with ytt overlays
+
+Some Hub workloads are under-sized for this environment — e.g.
+`graphql-stitching-service` (512Mi limit, `--max-old-space-size=500`) and
+`ensemble-application-metadata` (1.5g heap plus uncapped direct memory in a 3Gi
+limit) get `OOMKilled`. `hub-install-config.yaml` has no knob for pod
+resources or JVM flags, so `apply-overlays.sh` patches them via ytt overlays:
+
+```bash
+./apply-overlays.sh
+```
+
+Run it after `./run-install.sh` has finished. Each file in `overlays/` is a
+ytt overlay. Its first line names the PackageInstall that renders the
+resources it patches:
+
+```yaml
+#! target-packageinstall: ensemble-helm
+```
+
+To override something else, drop a new file in `overlays/`. The script needs no
+changes.
+
+How it works: the child PackageInstalls (`ensemble-helm`, `contour`, ...) are
+owned by the parent `sm` PackageInstall, which overwrites them on every
+reconcile, so annotating a child directly doesn't stick. The script instead
+creates one Secret per overlay, plus a generated `custom-overlays-wiring`
+Secret that adds the `ext.packaging.carvel.dev/ytt-paths-from-secret-name.N`
+annotation to each target child. It attaches that wiring Secret to `sm`
+(index 100), so the annotations are re-applied on every `sm` render. Verified
+to survive a forced `sm` reconcile.
+
+`run-install.sh` rewrites the `sm` PackageInstall and will likely drop that
+annotation, so rerun `./apply-overlays.sh` after every install. It's safe to
+rerun any time, and it forces a reconcile so edited overlays take effect.
+
+Gotcha when writing overlays: a document-level `#@overlay/match` must come
+**before** the `---`. Placed after, it annotates the first key instead, ytt
+treats the file as plain data, and the installer's own overlays fail with
+`key "kind" not in yamlfragment`, breaking the package's reconcile.
+
 ## Teardown
 
 ```bash

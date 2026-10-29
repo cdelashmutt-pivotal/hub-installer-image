@@ -1,0 +1,24 @@
+#! target-packageinstall: ensemble-helm
+#!
+#! graphql-stitching-service is OOMKilled at the stock 512Mi limit: node runs
+#! with --max-old-space-size=500, leaving no headroom for non-heap memory
+#! (buffers, native, the yarn wrapper process). Raise the limit and keep the
+#! V8 heap cap at ~70% of it.
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "graphql-stitching-service"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: graphql-stitching-service
+        resources:
+          limits:
+            memory: 1Gi
+          requests:
+            memory: 768Mi
+        env:
+        #@overlay/match by="name"
+        - name: NODE_OPTS
+          value: " --heapsnapshot-signal=SIGUSR2 --diagnostic-dir=/opt/vmware/heap-dump --max-old-space-size=700 --trace-gc --trace-gc-ignore-scavenger --optimize_for_size"

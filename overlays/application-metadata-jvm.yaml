@@ -1,0 +1,22 @@
+#! target-packageinstall: ensemble-helm
+#!
+#! ensemble-application-metadata is OOMKilled at its 3Gi limit with only ~200MB
+#! of live heap. -Xms/-Xmx 1536m plus 512m metaspace plus the default direct
+#! memory cap (= Xmx) can exceed the limit before the heap fills. Shrink the
+#! heap and cap direct memory explicitly.
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "ensemble-application-metadata"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: ensemble-application-metadata
+        env:
+        #@overlay/match by="name"
+        - name: JVM_HEAP
+          value: 1g
+        #@overlay/match by="name"
+        - name: EXT_JAVA_OPTS
+          value: "-Dreactor.netty.pool.maxIdleTime=20000 -Dreactor.netty.pool.maxLifeTime=60000 -Dreactor.netty.pool.acquireTimeout=60000 -XX:MaxDirectMemorySize=512m"
