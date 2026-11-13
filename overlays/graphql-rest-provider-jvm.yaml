@@ -1,0 +1,22 @@
+#! target-packageinstall: ensemble-helm
+#!
+#! graphql-rest-provider-service is OOMKilled at its 5Gi limit with only
+#! ~400MB of live heap. -Xms/-Xmx 2560m plus 512m metaspace plus the default
+#! direct memory cap (= Xmx) exceeds the limit before the heap fills. Shrink
+#! the heap and cap direct memory explicitly.
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "graphql-rest-provider-service"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: graphql-rest-provider-service
+        env:
+        #@overlay/match by="name"
+        - name: JVM_HEAP
+          value: 1536m
+        #@overlay/match by="name"
+        - name: EXT_JAVA_OPTS
+          value: "-Dreactor.netty.pool.maxIdleTime=20000 -Dreactor.netty.pool.maxLifeTime=60000 -Dreactor.netty.pool.acquireTimeout=60000 -XX:MaxDirectMemorySize=768m"

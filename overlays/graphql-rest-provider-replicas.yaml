@@ -1,0 +1,10 @@
+#! target-packageinstall: ensemble-helm
+#!
+#! The evaluation profile runs 2 replicas of graphql-rest-provider-service at
+#! up to 5Gi each. The installer ignores a replicas override in
+#! hub-install-config.yaml (11.0.0), so set it here. Frees several GB.
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"kind": "Deployment", "metadata": {"name": "graphql-rest-provider-service"}})
+---
+spec:
+  replicas: 1

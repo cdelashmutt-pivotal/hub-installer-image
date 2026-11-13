@@ -1,0 +1,16 @@
+# Workaround for hubSku: tse (11.0.0): the shared HTTPProxy "tanzu-sm-httpproxy" routes
+# /tanzu-cf-cli to tanzu-cf-cli-service, which belongs to a module the TSE SKU doesn't install.
+# Contour marks the whole HTTPProxy invalid, dropping the OAuth login, FRP and subscription
+# routes. This selector-less placeholder makes the reference resolve; /tanzu-cf-cli has no backends.
+# Not needed for HUB_SKU=full.
+# Adapted from https://github.com/dbbaskette/truesource-hub-docker-desktop
+apiVersion: v1
+kind: Service
+metadata:
+  name: tanzu-cf-cli-service
+  namespace: tanzusm
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

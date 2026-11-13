@@ -1,0 +1,8 @@
+downloads:
+  - slug: product-vulnerabilities
+    hubDocumentServiceTtlSeconds: 86400
+    hubDocumentServiceCategory: SECURITY_METADATA
+
+  - slug: product-sboms
+    hubDocumentServiceTtlSeconds: 86400
+    hubDocumentServiceCategory: SECURITY_METADATA

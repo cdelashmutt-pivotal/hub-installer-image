@@ -1,3 +1,4 @@
 .envrc
 server-cert.pem
 hub-install-config.yaml
+work/
